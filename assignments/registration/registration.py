@@ -46,7 +46,7 @@ def find_nearest_neighbor(src, dst):
     :param dst: A N x 3 point cloud
     :return: the
     """
-    tree = sp.spacial.KDTree(src)
+    tree = sp.spatial.KDTree(src)
     distance, index = tree.query(dst)
 
     return distance, index
@@ -63,7 +63,7 @@ def icp(source, target, init_pose=None, max_iterations=10, tolerance=0.0001):
         :return: A 4 x 4 rigid transformation matrix mapping source to target
             the distances and the error
     """
-    T = np.eye(4)
+    #T = np.eye(4)
     distances = 0
     error = 0
 
@@ -80,13 +80,13 @@ def icp(source, target, init_pose=None, max_iterations=10, tolerance=0.0001):
         T = init_pose
 
     tmp_tol = np.inf
-    err = np.inf
+    #error = np.inf
     k = 0
 
     for i in range(max_iterations):
         while tmp_tol > tolerance:
-            dist, idx = find_nearest_neighbor(src_init, target)
-            for ii, el in enumerate(idx):
+            distances, index = find_nearest_neighbor(src_init, target)
+            for ii, el in enumerate(index):
                 tmp_trg[ii] = target[el]
 
             T_tmp, R_tmp, t_tmp = paired_points_matching(src_init, tmp_trg)
@@ -95,10 +95,10 @@ def icp(source, target, init_pose=None, max_iterations=10, tolerance=0.0001):
             src_init = src_init + np.tile(t_tmp, (source.shape[0], 1))
             T = np.dot(T_tmp, T)
 
-            err_tmp = err
-            err = np.sum(dist) / dist.shape[0]
-            err = np.sqrt(err)
-            tmp_tol = err_tmp - err
+            err_tmp = error
+            error = np.sum(distances) / distances.shape[0]
+            error = np.sqrt(error)
+            tmp_tol = err_tmp - error
             # print(tmp_tol)
 
             k += 1
