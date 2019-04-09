@@ -63,20 +63,23 @@ With optical sensors we can measure torsion and flexion of the fibre optic cable
 ## Assignment 3 - Registration
 
 ![result registration assignment](assignments/registration/registration_result.png)
->Result of the registration assignment [output.txt](assignments/registration/output.txt)
+>Result of the registration assignment after 46 iterations [output.txt](assignments/registration/output.txt)
 
 ### Report
 #### What happens if you use an identity as initial pose? ####
+With an identity as the initial pose, one will only find a local instead of global minimum
 
-
-#### Describe two methods, how you can acquire the target data in the OR.####
-
+#### Describe two methods, how you can acquire the target data in the OR ####
+For automatic registration, two possible methods to acquire target data could be MRI and CT.
+By hand, tracked pointers or laser scanning can be used.
 
 #### What is the minimum number of points you need for paired points matching? ####
-
+At least three points are needed
 
 #### If the patient moves, your calculated transformation is not accurate anymore. How can you prevent this? ####
+With fiducials on the patients skin. They can be detected in real time
 
 #### We are in ENT surgery now. Which anatomical landmarks do you take for paired points matching and which surface for ICP. Explain why? ####
-
+The more unique ones, the better. Also, they should surround the place of treatment. Therefore, for ENT surgery the
+ear canal or the nose tip for example would be suitable.
 
