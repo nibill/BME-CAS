@@ -46,13 +46,13 @@ def find_nearest_neighbor(src, dst):
     :param dst: A N x 3 point cloud
     :return: the
     """
-    tree = sp.spatial.KDTree(src)
-    distance, index = tree.query(dst)
+    tree = sp.spatial.KDTree(dst)
+    distance, index = tree.query(src)
 
     return distance, index
 
 
-def icp(source, target, init_pose=None, max_iterations=10, tolerance=0.0001):
+def icp(source, target, init_pose=None, max_iterations=1000, tolerance=0.0001):
     """
     Iteratively finds the best transformation that mapps the source points onto the target
     :param source: A N x 3 point cloud
@@ -64,8 +64,8 @@ def icp(source, target, init_pose=None, max_iterations=10, tolerance=0.0001):
             the distances and the error
     """
     #T = np.eye(4)
-    distances = 0
-    error = 0
+    #distances = 0
+    #error = 0
 
     # Your code goes here
 
@@ -80,13 +80,13 @@ def icp(source, target, init_pose=None, max_iterations=10, tolerance=0.0001):
         T = init_pose
 
     tmp_tol = np.inf
-    #error = np.inf
+    err = np.inf
     k = 0
 
     for i in range(max_iterations):
         while tmp_tol > tolerance:
-            distances, index = find_nearest_neighbor(src_init, target)
-            for ii, el in enumerate(index):
+            dist, idx = find_nearest_neighbor(src_init, target)
+            for ii, el in enumerate(idx):
                 tmp_trg[ii] = target[el]
 
             T_tmp, R_tmp, t_tmp = paired_points_matching(src_init, tmp_trg)
@@ -95,16 +95,16 @@ def icp(source, target, init_pose=None, max_iterations=10, tolerance=0.0001):
             src_init = src_init + np.tile(t_tmp, (source.shape[0], 1))
             T = np.dot(T_tmp, T)
 
-            err_tmp = error
-            error = np.sum(distances) / distances.shape[0]
-            error = np.sqrt(error)
-            tmp_tol = err_tmp - error
+            err_tmp = err
+            err = np.sum(dist) / dist.shape[0]
+            err = np.sqrt(err)
+            tmp_tol = err_tmp - err
             # print(tmp_tol)
 
             k += 1
 
     print("Iterations: ", k)
-    return T, distances, error
+    return T, dist, err
 
 
 def get_initial_pose(template_points, target_points):
