@@ -2,6 +2,7 @@ import numpy as np
 import scipy as sp
 from scipy import spatial
 
+
 def paired_points_matching(source, target):
     """
     Calculates the transformation T that maps the source to the target
@@ -12,7 +13,6 @@ def paired_points_matching(source, target):
         R: 3x3 rotation matrix part of T
         t: 1x3 translation vector part of T
     """
-    assert source.shape == target.shape
 
     T = np.eye(4)
     R = np.eye(3)
@@ -64,9 +64,9 @@ def icp(source, target, init_pose=None, max_iterations=1000, tolerance=0.0001):
         :return: A 4 x 4 rigid transformation matrix mapping source to target
             the distances and the error
     """
-    #T = np.eye(4)
-    #distances = 0
-    #error = 0
+    # T = np.eye(4)
+    # distances = 0
+    # error = 0
 
     # Your code goes here
 
@@ -85,25 +85,23 @@ def icp(source, target, init_pose=None, max_iterations=1000, tolerance=0.0001):
 
     k = 0
 
-    for i in range(max_iterations):
-        while tmp_tol > tolerance:
-            distance, idx = find_nearest_neighbor(src_init, target)
-            for ii, el in enumerate(idx):
-                tmp_trg[ii] = target[el]
+    while tmp_tol > tolerance and k < max_iterations:
+        distance, idx = find_nearest_neighbor(src_init, target)
+        for ii, el in enumerate(idx):
+            tmp_trg[ii] = target[el]
 
-            T_tmp, R_tmp, t_tmp = paired_points_matching(src_init, tmp_trg)
+        T_tmp, R_tmp, t_tmp = paired_points_matching(src_init, tmp_trg)
 
-            src_init = np.dot(R_tmp, src_init.T).T
-            src_init = src_init + np.tile(t_tmp, (source.shape[0], 1))
-            T = np.dot(T_tmp, T)
+        src_init = np.dot(R_tmp, src_init.T).T
+        src_init = src_init + np.tile(t_tmp, (source.shape[0], 1))
+        T = np.dot(T_tmp, T)
 
-            err_tmp = error
-            error = np.sum(distance) / distance.shape[0]
-            error = np.sqrt(error)
-            tmp_tol = err_tmp - error
-            # print(tmp_tol)
+        err_tmp = error
+        error = np.sum(distance) / distance.shape[0]
+        error = np.sqrt(error)
+        tmp_tol = err_tmp - error
 
-            k += 1
+        k += 1
 
     print("Iterations: ", k)
     return T, distance, error
@@ -128,4 +126,3 @@ def get_initial_pose(template_points, target_points):
     T[:3, 3] = t
 
     return T
-
