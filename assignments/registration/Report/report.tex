@@ -8,7 +8,7 @@
 \usepackage[margin=1in]{geometry}
 \usepackage{amsmath,amsthm,amssymb}
 \usepackage{graphicx} %This allows to include eps figures
-
+\usepackage{sectsty}
 % This is to include code
 \usepackage{listings}
 \usepackage{xcolor}
@@ -40,6 +40,9 @@
 \newenvironment{corollary}[2][Corollary]{\begin{trivlist}
 \item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
 
+
+\sectionfont{\fontsize{12}{15}\selectfont}
+
 \begin{document}
 
 % --------------------------------------------------------------
@@ -53,18 +56,21 @@
 
 \maketitle
 
-\section{Identity as initial pose}
+\section*{What happens if you use an identity as initial pose?}
+With an identity as the initial pose, one will only find a local instead of global minimum
 
-\section{Acquire target data in OR}
+\section*{Describe two methods, how you can acquire the target data in the OR.}
+For automatic registration, two possible methods to acquire target data could be MRI and CT.
+By hand, tracked pointers or laser scanning can be used.
 
-
-\section{Minimum number of points}
+\section*{What is the minimum number of points you need for paired points matching?}
 At least three points are needed
 
-\section{Prevent inaccuracy after movement}
+\section*{If the patient moves, your calculated transformation is not accurate anymore. How can you prevent this?}
+With fiducials on the patients skin. They can be detected in real time.
 
-
-\section{ENT surgery}
-Well recognizable and distinguishable landmarks are prefered. Therefore, the nose and ears fit these criterias the best.
+\section*{We are in ENT surgery now. Which anatomical landmarks do you take for paired points matching and which surface for ICP. Explain why?}
+The more unique ones, the better. Also, they should surround the place of treatment. Therefore, for ENT surgery the
+ear canal or the nose tip for example would be suitable.
 
 \end{document}
