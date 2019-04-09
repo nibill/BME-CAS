@@ -13,6 +13,7 @@ def paired_points_matching(source, target):
         t: 1x3 translation vector part of T
     """
     assert source.shape == target.shape
+
     T = np.eye(4)
     R = np.eye(3)
     t = np.zeros((1, 3))
@@ -31,7 +32,7 @@ def paired_points_matching(source, target):
 
     R = np.dot(vMat.T, uMat.T)
 
-    t = - (np.dot(R, centroidSource.T)) + centroidTarget
+    t = - (np.dot(R, centroidSource)) + centroidTarget
 
     T[:3, :3] = R
     T[:3, 3] = t
@@ -80,12 +81,13 @@ def icp(source, target, init_pose=None, max_iterations=1000, tolerance=0.0001):
         T = init_pose
 
     tmp_tol = np.inf
-    err = np.inf
+    error = np.inf
+
     k = 0
 
     for i in range(max_iterations):
         while tmp_tol > tolerance:
-            dist, idx = find_nearest_neighbor(src_init, target)
+            distance, idx = find_nearest_neighbor(src_init, target)
             for ii, el in enumerate(idx):
                 tmp_trg[ii] = target[el]
 
@@ -95,16 +97,16 @@ def icp(source, target, init_pose=None, max_iterations=1000, tolerance=0.0001):
             src_init = src_init + np.tile(t_tmp, (source.shape[0], 1))
             T = np.dot(T_tmp, T)
 
-            err_tmp = err
-            err = np.sum(dist) / dist.shape[0]
-            err = np.sqrt(err)
-            tmp_tol = err_tmp - err
+            err_tmp = error
+            error = np.sum(distance) / distance.shape[0]
+            error = np.sqrt(error)
+            tmp_tol = err_tmp - error
             # print(tmp_tol)
 
             k += 1
 
     print("Iterations: ", k)
-    return T, dist, err
+    return T, distance, error
 
 
 def get_initial_pose(template_points, target_points):
